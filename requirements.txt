@@ -1,0 +1,5 @@
+pygithub
+python-dotenv
+pytz
+jinja2
+pyyaml
