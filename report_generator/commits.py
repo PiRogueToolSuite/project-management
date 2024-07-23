@@ -41,7 +41,7 @@ def format_commit_message(commit):
     return text
 
 
-def generate_report(output_file: Path):
+def dump_commit_list(output_file: Path):
     with output_file.open('w') as f:
         f.write('# List of commits\n')
         for repo in list_repositories():
@@ -56,5 +56,5 @@ def generate_report(output_file: Path):
 if __name__ == '__main__':
     output_dir = Path('./output')
     os.makedirs(output_dir, exist_ok=True)
-    generate_report(output_dir / 'commits.md')
+    dump_commit_list(output_dir / 'commits.md')
     print(f'Report generated at {output_dir}')
