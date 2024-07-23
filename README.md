@@ -1,7 +1,6 @@
 <div align="center">
 <img width="60px" src="https://pts-project.org/android-chrome-512x512.png">
 <h1>PiRogue project management</h1>
-<hr>
 <p>
 The unique place where we describe the ongoing tasks as well as what have been done so far.
 </p>
@@ -10,7 +9,6 @@ The unique place where we describe the ongoing tasks as well as what have been d
 <a href="https://pts-project.org/docs/">Documentation</a> | 
 <a href="https://discord.gg/qGX73GYNdp">Support</a>
 </p>
-<hr>
 </div>
 
 # How to report activities
