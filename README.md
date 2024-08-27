@@ -26,3 +26,10 @@ What are you planning to do the next month?
 #### Challenges
 What challenges have you faced this month?
 ```
+
+# How to generate the list of all the commits of the month
+
+You first have to export your GitHub token as an environment variable `GITHUB_TOKEN`. If you don't have generated a token yet, you can do it [here](https://github.com/settings/tokens).
+
+Then, you run the Python script `generate_commits.py` to generate the list of all commits of the month. The script will generate a markdown file `commits.md`in the folder `output`.
+
