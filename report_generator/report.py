@@ -70,7 +70,7 @@ class ProjectActivity:
     def _get_reports(self):
         comments = self.issue.get_comments(since=first_day_of_current_month())
         for comment in comments:
-            if '#### Next month' in comment.body:
+            if '#### This month' in comment.body:
                 self.reports.append(comment)
 
     def __getattr__(self, item):

@@ -34,10 +34,12 @@ def list_commits(repository: Repository):
 
 def format_commit_message(commit):
     commit_lines = commit.commit.message.split('\n')
-    text = f'* [{commit.author.name}] {commit_lines[0]}'
-    for l in commit_lines[1:]:
-        text += f'\n  {l}'
-    text += '\n'
+    name = 'Unknown'
+    if commit.author: name = commit.author.name
+    text = f'* [{name}]\t{commit_lines[0]}'
+    # for l in commit_lines[1:]:
+    #     text += f'\n  {l}'
+    # text += '\n'
     return text
 
 
@@ -49,7 +51,7 @@ def dump_commit_list(output_file: Path):
             if commits:
                 f.write(f'\n## {repo.name}\n')
                 for commit in commits:
-                    f.write(format_commit_message(commit))
+                    f.write(f'{format_commit_message(commit)}\n')
                 f.write('')
 
 

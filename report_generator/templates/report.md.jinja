@@ -1,39 +1,53 @@
 ---
 title: Monthly report n⁰{{report_number}} - {{report_date}}
 description: "Monthly report of the activities on the PiRogue Tool Suite project"
-lead: "PiRogue tool suite (PTS) is an open-source tool suite that provides a comprehensive mobile forensics and network traffic analysis platform."
+lead: "PiRogue tool suite (PTS) is an open-source tool suite that provides a comprehensive mobile forensics and digital investigation platform."
 date: {{publication_date}}
 lastmod: {{publication_date}}
 draft: false
 weight: 50
+type: blog
+outputs:
+   - 'html'
+   - 'email'
 contributors: ["Esther Onfroy"]
+categories: ['activity reports']
+toc_enabled: true
+toc_start_level: 2
+toc_end_level: 2
+toc_ordered: false
 ---
 
 # Project overview
-PiRogue Tool Suite(PTS) provides a platform combining analysis tools, knowledge management, incident response management and artifact management, which allows NGOs with limited resources to equip themselves at a low cost. The project consists of an open-source tool suite that provides a comprehensive mobile device forensics and network traffic analysis platform.
+PiRogue Tool Suite (PTS) provides a platform combining analysis tools, knowledge management, incident response management and artifact management, which allows NGOs with limited resources to equip themselves at a low cost. The project consists of an open-source tool suite that provides a comprehensive mobile device forensics and digital investigation platform.
 
 * Website: [pts-project.org](https://pts-project.org)
 * Email: `hello [at] pts-project.org`
 * GitHub: [Source code](https://github.com/PiRogueToolSuite) - [Roadmap](https://github.com/orgs/PiRogueToolSuite/projects/3/views/4)
 * Get support: [Discord](https://discord.gg/qGX73GYNdp)
+* Support us: [OpenCollective](https://opencollective.com/pts)
 
-# Announcements
+---
+
+# 📢 Announcements
 xxxx
 
-# Impacts and results
+# 🎉 Impacts and results
 xxxx
 
-# Activity report
+# 📒 Activity report
+
+You can find more details about the different activities in the [project roadmap](https://github.com/orgs/PiRogueToolSuite/projects/3/views/4).
 
 {% for us in user_stories -%}
 {% if us.has_reports -%}
-##  {{ us.title }} [#{{us.number}}]({{us.html_url}})
+## 📦 {{ us.title }}
 {{ us.description }}
 
 {% if us.has_tasks -%}
 ### Overview of the different activities
 {% for issue in us.tasks -%}
-* {% include "mixins/state.md.jinja" %} {{ issue.title }} [#{{issue.number}}]({{issue.html_url}})
+* {% include "mixins/state.md.jinja" %} {{ issue.title }}
 {% endfor -%}
 {% endif -%}
 
@@ -45,7 +59,7 @@ xxxx
 
 {% for issue in us.tasks -%}
 {% if issue.has_reports %}
-### {{ issue.title }} [#{{issue.number}}]({{issue.html_url}})
+### {{ issue.title }}
 {% for report in issue.reports -%}
 {{ report.body }}
 {% endfor -%}
