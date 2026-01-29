@@ -1,21 +1,19 @@
 import os
 import sys
 from pathlib import Path
-from datetime import datetime
 
 from report_generator.report import ProjectReport
 
-now = datetime.now()
 output_dir = Path('./output')
-report_date = now.strftime('%Y-%m')
 report_number = sys.argv[1] if len(sys.argv) > 1 else 'xx'
+generator = ProjectReport()
+report_date = generator.reporting_date.strftime('%Y-%m')
 report_dir = output_dir / f'Monthly report #{report_number} - {report_date}'
 escaped_report_dir = Path(str(report_dir).replace(' ', '\ '))
 report_url = f'https://pts-project.org/blog/monthly-report-n{report_number}-{report_date}/'
 
 # Create the report directory if it doesn't exist
 os.makedirs(report_dir, exist_ok=True)
-generator = ProjectReport()
 generator.generate_report(report_dir / 'index.md', report_number)
 generator.dump(report_dir / 'report.json')
 print(f'Report generated at {report_dir}')

@@ -1,7 +1,7 @@
 import json
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 import pytz
@@ -16,15 +16,18 @@ ISSUE_DESCRIPTION_REGEX = r"Description[:\s]+(.*?)Tasks"
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 
 
-def first_day_of_current_month():
-    now = datetime.now(pytz.utc)
-    return now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+def first_day_of_current_month(reporting_date):
+    # now = datetime.now()
+    # return now - timedelta(days=28)
+    # return now.replace(day=2, hour=0, minute=0, second=0, microsecond=0, year=2024, month=12)
+    return reporting_date.replace(day=4, hour=0, minute=0, second=0, microsecond=0)
 
 
 class ProjectActivity:
-    def __init__(self, repository: Repository, issue: Issue):
+    def __init__(self, repository: Repository, issue: Issue, reporting_date: datetime):
         self.repository: Repository = repository
         self.issue: Issue = issue
+        self.reporting_date = reporting_date
         self.tasks: list[ProjectActivity] = []
         self.reports: list[IssueComment] = []
         self.description: str = ''
@@ -65,10 +68,10 @@ class ProjectActivity:
             for matchNum, match in enumerate(matches, start=1):
                 sub_task_number = int(match.group(1))
                 sub_task = self.repository.get_issue(number=sub_task_number)
-                self.tasks.append(ProjectActivity(None, sub_task))
+                self.tasks.append(ProjectActivity(None, sub_task, self.reporting_date))
 
     def _get_reports(self):
-        comments = self.issue.get_comments(since=first_day_of_current_month())
+        comments = self.issue.get_comments(since=first_day_of_current_month(self.reporting_date))
         for comment in comments:
             if '#### This month' in comment.body:
                 self.reports.append(comment)
@@ -88,22 +91,33 @@ class ProjectReport:
         self.jinja_env = jinja2.Environment(loader=jinja2.PackageLoader('report_generator', './templates/'))
         auth = Auth.Token(GITHUB_TOKEN)
         self.github = Github(auth=auth)
+        self.reporting_date = datetime.now(pytz.utc)
+        self.set_reporting_date()
+        self.user_stories: list[ProjectActivity] = []
         self.repository = self.github.get_repo("PiRogueToolSuite/project-management")
-        self.user_stories: list[ProjectActivity] = self.get_user_stories()
+
+    def set_reporting_date(self):
+        today = datetime.now(pytz.utc)
+        # self.reporting_date = today - timedelta(days=28)
+        self.reporting_date.replace(hour=0, minute=0, second=0, microsecond=0)
+        if today.day < 10:
+            # Switch to the previous month
+            today = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+            self.reporting_date = today - timedelta(days=1)
 
     def get_user_stories(self):
         _user_stories = [us for us in self.repository.get_issues(labels=['user story'], state='all')]
         _user_stories = sorted(_user_stories, key=lambda x: int(x.title.split(' - ')[0].replace('US', '')))
         return [
-            ProjectActivity(self.repository, us) for us in _user_stories
+            ProjectActivity(self.repository, us, self.reporting_date) for us in _user_stories
         ]
 
     def dump(self, output_file: Path):
         now = datetime.now()
         report_data = {
             'metadata': {
-                'report_date': now.strftime('%Y-%m'),
-                'publication_date': now.strftime('%Y-%m-%d')
+                'report_date': self.reporting_date.strftime('%Y-%m'),
+                'publication_date': self.reporting_date.strftime('%Y-%m-%d')
             },
             'announcements': '',
             'user_stories': []
@@ -133,14 +147,15 @@ class ProjectReport:
             json.dump(report_data, out, indent=2)
 
     def generate_report(self, output_file: Path, report_number: str = 'xx'):
+        self.user_stories = self.get_user_stories()
         template = self.jinja_env.get_template('report.md.jinja')
-        now = datetime.now()
+
         with output_file.open('w') as f:
             f.write(template.render(
                 user_stories=self.user_stories,
                 report_number=report_number,
-                report_date=now.strftime('%Y-%m'),
-                publication_date=now.strftime('%Y-%m-%d'),
+                report_date=self.reporting_date.strftime('%Y-%m'),
+                publication_date=self.reporting_date.strftime('%Y-%m-%d'),
             ))
 
 
